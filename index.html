@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vash Music | Слушайте музыку без регистрации</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-color: #0a192f;
+            --secondary-color: #172a45;
+            --accent-color: #64ffda;
+            --text-color: #ccd6f6;
+            --text-secondary: #8892b0;
+            --heart-color: #ff5e7d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--main-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        
+        header {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .logo span {
+            color: var(--text-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .search-container {
+            position: relative;
+            margin-left: 1rem;
+        }
+        
+        .search-input {
+            background-color: rgba(100, 255, 218, 0.1);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            padding-left: 2rem;
+            color: var(--text-color);
+            font-family: 'Montserrat', sans-serif;
+            width: 160px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background-color: rgba(100, 255, 218, 0.2);
+            width: 180px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .menu-icon {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 101;
+        }
+        
+        .menu-icon span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color);
+            transition: all 0.3s;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 70%;
+            max-width: 300px;
+            height: 100vh;
+            background-color: var(--secondary-color);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            padding: 5rem 1.5rem 1.5rem;
+            z-index: 99;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .mobile-nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .mobile-search-container {
+            margin-top: 1.5rem;
+            position: relative;
+        }
+        
+        main {
+            flex: 1;
+            padding: 1rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .player-container {
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .player {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        
+        .cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .track-info {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .track-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            word-break: break-word;
+        }
+        
+        .track-artist {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background-color: rgba(100, 255, 218, 0.2);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--accent-color);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            padding: 0.5rem;
+        }
+        
+        .control-btn:hover {
+            color: var(--accent-color);
+        }
+        
+        .play-btn {
+            font-size: 2rem;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 150px;
+        }
+        
+        .volume-slider {
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        .playlist-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+        }
+        
+        .playlist {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.2rem;
+        }
+        
+        .track {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+        
+        .track:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .track-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        .track-details {
+            flex: 1;
+            min-width: 0;
+            padding-right: 30px; /* Место для кнопки лайка */
+        }
+        
+        .track-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .track-artist-small {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .track-duration {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+        
+        .like-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            z-index: 2;
+        }
+        
+        .heart {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-secondary);
+            transition: all 0.3s;
+        }
+        
+        .liked .heart {
+            fill: var(--heart-color);
+            animation: heartBeat 0.6s ease-out;
+        }
+        
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(0.9); }
+            75% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .like-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: var(--heart-color);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-up 1.5s ease-out forwards;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+        
+        footer {
+            background-color: var(--secondary-color);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .footer-link:hover {
+            color: var(--accent-color);
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 98;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 0.8rem;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-icon {
+                display: flex;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .player-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cover {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .track-info {
+                text-align: center;
+                width: 100%;
+            }
+            
+            .buttons {
+                gap: 1rem;
+            }
+            
+            .playlist {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                display: none;
+            }
+            
+            .mobile-search-container {
+                display: block;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .track-name {
+                white-space: normal;
+                word-break: break-word;
+                -webkit-line-clamp: 2;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">Vash<span>Music</span></a>
+        <div class="menu-icon" id="menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="nav-links">
+            <a href="#" class="nav-link">Главная</a>
+            <a href="https://t.me/Vashmusic_idea" class="nav-link">Предложить музыку</a>
+            <a href="https://github.com/Wolwejen/VashMusic" class="nav-link">GitHub</a>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="search-input" placeholder="Поиск...">
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Мобильное меню -->
+    <div class="overlay" id="overlay"></div>
+    <div class="mobile-menu" id="mobile-menu">
+        <nav class="mobile-nav-links">
+            <a href="#" class="mobile-nav-link">Главная</a>
+            <a href="https://t.me/Vashmusic_idea" class="mobile-nav-link">Предложить музыку</a>
+            <a href="https://github.com/Wolwejen/VashMusic" class="mobile-nav-link">GitHub</a>
+        </nav>
+        <div class="mobile-search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="mobile-search-input" placeholder="Поиск...">
+        </div>
+    </div>
+    
+    <main>
+        <div class="player-container">
+            <div class="player">
+                <div class="player-info">
+                    <img src="https://via.placeholder.com/120" alt="Обложка трека" class="cover" id="cover">
+                    <div class="track-info">
+                        <h1 class="track-title" id="track-title">Название трека</h1>
+                        <p class="track-artist" id="track-artist">Исполнитель</p>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <div class="progress-container" id="progress-container">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                    <div class="time-info">
+                        <span id="current-time">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="control-btn" id="prev-btn">⏮</button>
+                        <button class="control-btn play-btn" id="play-btn">▶</button>
+                        <button class="control-btn" id="next-btn">⏭</button>
+                        <div class="volume-container">
+                            <span class="control-btn">🔊</span>
+                            <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.01" value="0.7">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="playlist-header">
+            <h2 class="section-title">Ваша музыкальная коллекция</h2>
+        </div>
+        <div class="playlist" id="playlist">
+            <!-- Треки будут добавляться через JavaScript -->
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="https://t.me/Vashmusic_idea" class="footer-link">Telegram</a>
+            <a href="https://wolwejen.github.io/VashMusic/" class="footer-link">GitHub</a>
+            <a href="#" class="footer-link">О проекте</a>
+        </div>
+        <p>© 2025 Vash Music. Слушайте музыку без ограничений.</p>
+    </footer>
+    
+    <!-- SVG для сердечка -->
+    <svg style="display: none;">
+        <symbol id="heart-icon" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </symbol>
+    </svg>
+
+    <script>
+        // Элементы плеера
+        const audio = new Audio();
+        const playBtn = document.getElementById('play-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progress = document.getElementById('progress');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volume-slider');
+        const cover = document.getElementById('cover');
+        const trackTitle = document.getElementById('track-title');
+        const trackArtist = document.getElementById('track-artist');
+        const playlistEl = document.getElementById('playlist');
+        const searchInput = document.getElementById('search-input');
+        const mobileSearchInput = document.getElementById('mobile-search-input');
+        const menuIcon = document.getElementById('menu-icon');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const overlay = document.getElementById('overlay');
+        
+        // Треки (замените на свои файлы из папки music)
+        const tracks = [
+            {
+                id: 1,
+                title: "Псы попадут в рай",
+                artist: "ПОЛМАТЕРИ",
+                cover: "https://i.postimg.cc/1z1P1ff7/i-3.jpg",
+                file: "music/ПОЛМАТЕРИ-Псы попадут в рай.m4a",
+                duration: "2:37",
+                isLiked: false
+            },
+            {
+                id: 2,
+                title: "Слезы На Морозе (remix)",
+                artist: "fr1ckx music",
+                cover: "https://i.postimg.cc/t4XzTHYq/267-20250813142419.png",
+                file: "music/fr1ckx music Слезы На Морозе (remix).m4a",
+                duration: "2:51",
+                isLiked: false
+            },
+            {
+                id: 3,
+                title: "МАМА Я ВЛЮБИЛСЯ В НЕЁ (remix) (TikTok)",
+                artist: "JojoHF",
+                cover: "https://i.postimg.cc/JhddbFjw/i-4.jpg",
+                file: "music/МАМА Я ВЛЮБИЛСЯ В НЕЁ (remix) (TikTok).mp3",
+                duration: "2:26",
+                isLiked: false
+            },
+            {
+                id: 4,
+                title: "Gold",
+                artist: "New Magick",
+                cover: "https://i.postimg.cc/Qts76Q1X/Picsart-25-08-13-14-37-07-233.jpg",
+                file: "music/Gold - New Magick.mp3",
+                duration: "1:32",
+                isLiked: false
+            },
+            {
+                id: 5,
+                title: "Piano Tiles 2",
+                artist: "Armani West",
+                cover: "https://i.postimg.cc/7Y0rMSHs/1000238365.webp",
+                file: "music/Armani_West_Piano_Tiles_2_with_6arelyhuman_Cortisa_Star_O.mp3",
+                duration: "3:03",
+                isLiked: false
+            },
+            {
+                id: 6,
+                title: "Рассвет (nightcore version)",
+                artist: "AsteraSounds",
+                cover: "https://i.postimg.cc/j2tn8J3Y/1275x1275bb-60.webp",
+                file: "music/Рассвет (Nightcore Version) - AsteraSounds.mp3",
+                duration: "3:05",
+                likes: 28,
+                isLiked: false
+            },
+            {
+                id: 7,
+                title: "Самая",
+                artist: "Mada",
+                cover: "https://i.postimg.cc/QMMRL6Pf/9517056cb821886556fb5fc4edbefde9.jpg",
+                file: "music/Mada - Самая (Official music) - Mada.mp3",
+                duration: "2:25",
+                likes: 28,
+                isLiked: false
+            }
+        ];
+        
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        let filteredTracks = [...tracks];
+        
+        // Переключение мобильного меню
+        function toggleMobileMenu() {
+            menuIcon.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.classList.toggle('no-scroll');
+        }
+        
+        // Закрытие мобильного меню
+        function closeMobileMenu() {
+            menuIcon.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+        
+        // Загрузка трека
+        function loadTrack(trackIndex) {
+            const track = filteredTracks[trackIndex];
+            audio.src = track.file;
+            cover.src = track.cover;
+            trackTitle.textContent = track.title;
+            trackArtist.textContent = track.artist;
+            
+            audio.addEventListener('loadedmetadata', () => {
+                updateTimeInfo();
+            });
+            
+            if (isPlaying) {
+                audio.play();
+                playBtn.textContent = '⏸';
+            }
+            
+            // Подсветка текущего трека в плейлисте
+            const playlistItems = document.querySelectorAll('.track');
+            playlistItems.forEach((item, index) => {
+                if (index === trackIndex) {
+                    item.style.backgroundColor = 'rgba(100, 255, 218, 0.1)';
+                } else {
+                    item.style.backgroundColor = '';
+                }
+            });
+        }
+        
+        // Воспроизведение/пауза
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                playBtn.textContent = '▶';
+            } else {
+                audio.play();
+                playBtn.textContent = '⏸';
+            }
+            isPlaying = !isPlaying;
+        }
+        
+        // Следующий трек
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % filteredTracks.length;
+            loadTrack(currentTrackIndex);
+        }
+        
+        // Предыдущий трек
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + filteredTracks.length) % filteredTracks.length;
+            loadTrack(currentTrackIndex);
+        }
+        
+        // Обновление прогресса
+        function updateProgress(e) {
+            const { duration, currentTime } = e.srcElement;
+            const progressPercent = (currentTime / duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+            updateTimeInfo();
+        }
+        
+        // Установка прогресса
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+        
+        // Обновление времени
+        function updateTimeInfo() {
+            const currentMinutes = Math.floor(audio.currentTime / 60);
+            const currentSeconds = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+            currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
+            
+            const durationMinutes = Math.floor(audio.duration / 60);
+            const durationSeconds = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+            durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
+        }
+        
+        // Громкость
+        function setVolume() {
+            audio.volume = volumeSlider.value;
+        }
+        
+        // Поиск треков
+        function searchTracks(query) {
+            query = query.toLowerCase().trim();
+            if (query === '') {
+                filteredTracks = [...tracks];
+            } else {
+                filteredTracks = tracks.filter(track => 
+                    track.title.toLowerCase().includes(query) || 
+                    track.artist.toLowerCase().includes(query)
+                );
+            }
+            
+            // Сбросить текущий трек, если он не входит в отфильтрованный список
+            if (filteredTracks.length > 0 && !filteredTracks.some(t => t.file === tracks[currentTrackIndex].file)) {
+                currentTrackIndex = 0;
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    playBtn.textContent = '▶';
+                }
+            }
+            
+            renderPlaylist();
+            
+            // Если текущий трек остался в списке, обновить его индекс
+            if (filteredTracks.length > 0) {
+                const currentTrackFile = tracks[currentTrackIndex].file;
+                const newIndex = filteredTracks.findIndex(t => t.file === currentTrackFile);
+                if (newIndex !== -1) {
+                    currentTrackIndex = newIndex;
+                } else {
+                    currentTrackIndex = 0;
+                }
+                
+                // Подсветить текущий трек
+                const playlistItems = document.querySelectorAll('.track');
+                if (playlistItems[currentTrackIndex]) {
+                    playlistItems.forEach(item => item.style.backgroundColor = '');
+                    playlistItems[currentTrackIndex].style.backgroundColor = 'rgba(100, 255, 218, 0.1)';
+                }
+            }
+        }
+        
+        // Создание частиц для анимации лайка
+        function createParticles(element) {
+            const rect = element.getBoundingClientRect();
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'like-particles';
+            
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Позиция частицы
+                const x = rect.width / 2;
+                const y = rect.height / 2;
+                
+                // Случайное направление
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 20 + Math.random() * 30;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                
+                // Размер и цвет
+                const size = 3 + Math.random() * 4;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.backgroundColor = `hsl(${Math.random() * 30 + 340}, 100%, 70%)`;
+                
+                // Позиционирование
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                particlesContainer.appendChild(particle);
+            }
+            
+            element.appendChild(particlesContainer);
+            
+            // Удаление после анимации
+            setTimeout(() => {
+                particlesContainer.remove();
+            }, 1500);
+        }
+        
+        // Обработка лайков
+        function toggleLike(trackId) {
+            const track = tracks.find(t => t.id === trackId);
+            if (!track) return;
+            
+            track.isLiked = !track.isLiked;
+            
+            // Сохранение в localStorage
+            saveLikes();
+            
+            // Обновление отображения
+            renderPlaylist();
+            
+            // Найти текущий элемент трека в DOM
+            const trackElement = document.querySelector(`.track[data-id="${trackId}"]`);
+            if (trackElement && track.isLiked) {
+                createParticles(trackElement);
+            }
+        }
+        
+        // Сохранение лайков в localStorage
+        function saveLikes() {
+            const likesData = tracks.map(track => ({
+                id: track.id,
+                isLiked: track.isLiked
+            }));
+            localStorage.setItem('vashMusicLikes', JSON.stringify(likesData));
+        }
+        
+        // Загрузка лайков из localStorage
+        function loadLikes() {
+            const likesData = localStorage.getItem('vashMusicLikes');
+            if (likesData) {
+                const parsedData = JSON.parse(likesData);
+                parsedData.forEach(data => {
+                    const track = tracks.find(t => t.id === data.id);
+                    if (track) {
+                        track.isLiked = data.isLiked;
+                    }
+                });
+            }
+        }
+        
+        // Заполнение плейлиста
+        function renderPlaylist() {
+            playlistEl.innerHTML = '';
+            
+            if (filteredTracks.length === 0) {
+                playlistEl.innerHTML = '<div class="no-results">Ничего не найдено. Попробуйте изменить запрос.</div>';
+                return;
+            }
+            
+            filteredTracks.forEach((track, index) => {
+                const trackEl = document.createElement('div');
+                trackEl.className = `track ${track.isLiked ? 'liked' : ''}`;
+                trackEl.setAttribute('data-id', track.id);
+                trackEl.innerHTML = `
+                    <img src="${track.cover}" alt="${track.title}" class="track-cover">
+                    <div class="track-details">
+                        <div class="track-name">${track.title}</div>
+                        <div class="track-artist-small">${track.artist}</div>
+                    </div>
+                    <div class="track-duration">${track.duration}</div>
+                    <button class="like-btn" onclick="event.stopPropagation(); toggleLike(${track.id})">
+                        <svg class="heart" width="24" height="24">
+                            <use xlink:href="#heart-icon"></use>
+                        </svg>
+                    </button>
+                `;
+                trackEl.addEventListener('click', () => {
+                    currentTrackIndex = index;
+                    loadTrack(currentTrackIndex);
+                    if (!isPlaying) {
+                        togglePlay();
+                    }
+                    closeMobileMenu();
+                });
+                playlistEl.appendChild(trackEl);
+            });
+        }
+        
+        // Инициализация
+        function init() {
+            loadLikes();
+            renderPlaylist();
+            loadTrack(0);
+            
+            // События
+            playBtn.addEventListener('click', togglePlay);
+            prevBtn.addEventListener('click', prevTrack);
+            nextBtn.addEventListener('click', nextTrack);
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', nextTrack);
+            progressContainer.addEventListener('click', setProgress);
+            volumeSlider.addEventListener('input', setVolume);
+            
+            // Поиск
+            searchInput.addEventListener('input', (e) => {
+                searchTracks(e.target.value);
+            });
+            
+            mobileSearchInput.addEventListener('input', (e) => {
+                searchTracks(e.target.value);
+            });
+            
+            // Мобильное меню
+            menuIcon.addEventListener('click', toggleMobileMenu);
+            overlay.addEventListener('click', closeMobileMenu);
+            
+            // Закрытие меню при клике на ссылку
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+            
+            // Горячие клавиши
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    togglePlay();
+                } else if (e.code === 'ArrowRight') {
+                    nextTrack();
+                } else if (e.code === 'ArrowLeft') {
+                    prevTrack();
+                } else if (e.code === 'KeyF' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        }
+        
+        // Глобальная функция для обработки лайков
+        window.toggleLike = toggleLike;
+        
+        init();
+    </script>
+</body>
+</html>
